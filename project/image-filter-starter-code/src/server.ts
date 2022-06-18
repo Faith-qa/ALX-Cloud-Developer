@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import { filter } from 'bluebird';
 
 (async () => {
 
@@ -12,15 +13,29 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
-
+  
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
   // endpoint to filter an image from a public url.
+  app.get("/filteredimage", async(req, res) => {
+    const { image_url } = req.query;
+  //    1. validate the image_url query
+ 
+    if (!image_url) {
+      return res.status(404).json({msg: "No url was passed"});
+    }
+  //    2. call filterImageFromURL(image_url) to filter the image
+    let image_file = await filterImageFromURL(image_url);
+  //    3. send the resulting file in the response
+    return res.status(200).sendFile(image_file, () => {
+      deleteLocalFiles([image_file]);
+    })
+
+  })
   // IT SHOULD
   //    1
-  //    1. validate the image_url query
-  //    2. call filterImageFromURL(image_url) to filter the image
-  //    3. send the resulting file in the response
+    
+  
   //    4. deletes any files on the server on finish of the response
   // QUERY PARAMATERS
   //    image_url: URL of a publicly accessible image
