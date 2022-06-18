@@ -1,5 +1,5 @@
 # Udagram
-
+enpoint_url : http://udagram-faith-dev-dev.us-east-1.elasticbeanstalk.com/
 ## Server
 This is the implementatation of an image processing server deployed on AWS
 
@@ -20,5 +20,4 @@ of your AWS console:
 ![My_Image](EBS_Screenshots/Screenshot%20from%202022-06-18%2017-22-38.png)
 
 
-## Postman Snippets to show Endpoint success
 
