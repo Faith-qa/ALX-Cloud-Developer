@@ -1,30 +1,48 @@
 import 'source-map-support/register'
-import {APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult} from 'aws-lambda'
-import {UpdateTodoRequest} from '../../requests/UpdateTodoRequest'
+
+import {APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import {updateToDo} from "../../helpers/ToDo";
+import { createLogger } from '../../utils/logger';
+import { getUserId } from '../utils';
+import { cors } from 'middy/middlewares';
+import * as middy from 'middy';
+import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest';
 
+const logger = createLogger('update todo item')
+export const handler = middy(
+    async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("processing Event", event);
-  const authorization = event.headers.Authorization;
-  const split = authorization.split(' ');
-  const jwtToken = split[1];
+        try{
+            logger.info("Processing event: " + event)
 
-  const todoId = event.pathParameters.todoId;
-  const updatedTodo: UpdateTodoRequest = JSON.parse(event.body);
+            // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+            const todoId = event.pathParameters.todoId
+            const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
+            const userId = getUserId(event)
 
-  const toDoItem = await updateToDo(updatedTodo, todoId, jwtToken);
+            await updateToDo(updatedTodo, todoId,userId)
+            return {
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: ''
+            }
+        } catch (e) {
+            logger.error("Error: " + e.message)
+            return {
+                statusCode: 500,
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: e.message
+            }
+        }
+    }
+)
 
-  return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin":  "*",
-
-    },
-    body: JSON.stringify({
-      "item": toDoItem
-    }),
-
-  }
-
-};
+handler.use(
+    cors ({
+        credentials: true
+    })
+)
