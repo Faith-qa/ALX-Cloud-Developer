@@ -4,6 +4,7 @@ import {CreateTodoRequest} from "../requests/CreateTodoRequest";
 import {UpdateTodoRequest} from "../requests/UpdateTodoRequest";
 import {TodoUpdate} from "../models/TodoUpdate";
 import {ToDoAccess} from "./ToDoAccess";
+import { String } from "aws-sdk/clients/appstream";
 
 const uuidv4 = require('uuid/v4');
 const toDoAccess = new ToDoAccess();
@@ -28,9 +29,10 @@ export function createToDo(createTodoRequest: CreateTodoRequest, jwtToken: strin
     });
 }
 
-export function updateToDo(updateTodoRequest: UpdateTodoRequest, todoId: string, jwtToken: string): Promise<TodoUpdate> {
+export function updateToDo(updatedTodo: UpdateTodoRequest, todoId: String, jwtToken: string): Promise<TodoUpdate> {
     const userId = parseUserId(jwtToken);
-    return toDoAccess.updateToDo(updateTodoRequest, todoId, userId);
+
+    return toDoAccess.updateToDo(updatedTodo, todoId, userId);
 }
 
 export function deleteToDo(todoId: string, jwtToken: string): Promise<string> {

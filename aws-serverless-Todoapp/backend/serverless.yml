@@ -25,9 +25,7 @@ provider:
   environment:
     PROJECT_NAME: Todoapp
     TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_CREATED_AT_INDEX: CreatedAtIndex
     S3_BUCKET_NAME: okoth-serverless-todoapp-${self:provider.stage}
-    SIGNED_URL_EXPIRATION: 300
 
 custom:
   documentation:
