@@ -3,7 +3,7 @@ import {parseUserId} from "../auth/utils";
 import {CreateTodoRequest} from "../requests/CreateTodoRequest";
 import {UpdateTodoRequest} from "../requests/UpdateTodoRequest";
 import {TodoUpdate} from "../models/TodoUpdate";
-import {ToDoAccess} from "./ToDoAccess";
+import {ToDoAccess} from "../data_layer/ToDoAccess";
 
 const uuidv4 = require('uuid/v4');
 const toDoAccess = new ToDoAccess();
