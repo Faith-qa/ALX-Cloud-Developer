@@ -7,10 +7,16 @@ import { APIGatewayProxyEvent } from "aws-lambda";
  *
  * @returns raw(not decoded) JWT token
  */
-export function getToken(event: APIGatewayProxyEvent): string {
+export function getrawToken(event: APIGatewayProxyEvent): string {
   const authorization = event.headers.Authorization
   const split = authorization.split(' ')
   const jwtToken = split[1]
 
   return (jwtToken)
+}
+
+export function certToPEM( cert: string) {
+  let pem = cert.match( /.{1,64}/g ).join( '\n' );
+  pem = `-----BEGIN CERTIFICATE-----\n${ cert }\n-----END CERTIFICATE-----\n`;
+  return pem;
 }
