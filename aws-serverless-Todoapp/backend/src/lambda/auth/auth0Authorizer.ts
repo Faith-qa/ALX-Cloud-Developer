@@ -6,13 +6,14 @@ import { createLogger } from '../../utils/logger'
 import Axios from 'axios'
 //import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
+import { certToPEM } from '../util-gettoken'
 
 const logger = createLogger('auth')
 
 // TODO: Provide a URL that can be used to download a certificate that can be used
 // to verify JWT token signature.
 // To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
-const jwksUrl = 'https://dev-wg5i5b-c.us.auth0.com/.well-known/jwks.json'
+const jwksUrl = 'https://dev-jga3fk71.us.auth0.com/.well-known/jwks.json'
 
 export const handler = async (
   event: CustomAuthorizerEvent
@@ -55,27 +56,21 @@ export const handler = async (
 }
 
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
-  const response = await Axios.get(jwksUrl)
-  const jwks = response.data.keys
-
   try {
 
     const token = getToken(authHeader)
+    const jwks = await Axios.get(jwksUrl);
 
     // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-    const pemData = jwks[0]['x5c'][0]
-    
-    return verify(token, certToPEM(pemData), { algorithms: ['RS256'] }) as JwtPayload
+    const pemData = jwks['data']['keys'][0]['x5c'][0]
+    const cert = certToPEM(pemData)
+
+    return verify(token, cert, { algorithms: ['RS256'] }) as JwtPayload
   } catch(err){
     logger.error('Fail to authenticate', err)
   }
+ 
 }
-function certToPEM(cert: string) {
-  cert = cert.match(/.{1,64}/g).join('\n');
-  cert = `-----BEGIN CERTIFICATE-----\n${cert}\n-----END CERTIFICATE-----\n`;
-  return cert;
-}
-
 function getToken(authHeader: string): string {
   if (!authHeader) throw new Error('No authentication header')
 
