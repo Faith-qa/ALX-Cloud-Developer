@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 
 import {APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler} from 'aws-lambda';
-import {deleteToDo} from "../../business_layer/ToDo";
+import {deleteToDo} from "../../businessLogic/ToDo";
 import { getrawToken } from '../util-gettoken';
 import { createLogger } from '../../utils/logger';
 
