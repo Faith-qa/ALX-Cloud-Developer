@@ -2,7 +2,7 @@ import 'source-map-support/register'
 
 import {APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult} from 'aws-lambda'
 import {CreateTodoRequest} from '../../requests/CreateTodoRequest';
-import {createToDo} from "../../business_layer/ToDo";
+import {createToDo} from "../../businessLogic/ToDo";
 import { getrawToken } from '../util-gettoken';
 import { createLogger } from '../../utils/logger';
 
